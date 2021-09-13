@@ -1,5 +1,3 @@
-package first.lab;
-
 import javax.swing.*;
 
 public class CustomRunnable implements Runnable{
@@ -15,11 +13,14 @@ public class CustomRunnable implements Runnable{
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             synchronized (slider){
-                slider.setValue(value);
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                while (slider.getValue() != value) {
+                    int now = slider.getValue();
+                    slider.setValue(now > value ? now - 1 : now + 1);
+                    try {
+                        Thread.sleep(20);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
             }
         }

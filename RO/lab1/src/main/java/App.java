@@ -1,14 +1,12 @@
-package first.lab.a;
-
-import first.lab.CustomRunnable;
-
 import javax.swing.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class App {
     private static Thread firstThread;
     private static Thread secondThread;
     private static final JSlider slider = new JSlider();
     private static boolean isStarted = false;
+    public static AtomicInteger semaphore = new AtomicInteger();
 
     public static void main(String[] args) {
         setUI();
@@ -22,7 +20,7 @@ public class App {
     }
 
     private static void clickedStartButton() {
-        if(!isStarted) {
+        if (!isStarted) {
             firstThread.start();
             secondThread.start();
             isStarted = true;
@@ -32,13 +30,13 @@ public class App {
     private static void setUI() {
         JFrame frame = new JFrame("A");
 
-        slider.setBounds(50,30,300,50);
+        slider.setBounds(50, 30, 300, 50);
         slider.setMajorTickSpacing(10);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
 
         JButton startButton = new JButton("Start!");
-        startButton.setBounds(100,200,200,40);
+        startButton.setBounds(100, 200, 200, 40);
         startButton.addActionListener(e -> clickedStartButton());
 
         SpinnerModel firstModel = new SpinnerNumberModel(1, 0, 10, 1);
@@ -61,7 +59,7 @@ public class App {
         frame.add(startButton);
         frame.add(firstSpinner);
         frame.add(secondSpinner);
-        frame.setSize(400,500);
+        frame.setSize(400, 500);
         frame.setLayout(null);
         frame.setVisible(true);
     }

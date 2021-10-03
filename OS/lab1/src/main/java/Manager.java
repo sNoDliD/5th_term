@@ -3,12 +3,13 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 public class Manager {
 
     public String run(int x) throws InterruptedException, IOException {
-        Foo f = "Hello"::repeat;
-        Foo g = x1 -> " World!" + "abcdefg".charAt(x1);
+        Function<Integer, String> f = "Hello"::repeat;
+        Function<Integer, String> g = x1 -> " World!" + "abcdefg".charAt(x1);
         AtomicReference<String> res1 = new AtomicReference<>();
         AtomicReference<String> res2 = new AtomicReference<>();
         Executor exe1 = new Executor(3800, f, x);
@@ -17,14 +18,14 @@ public class Manager {
         Thread pipeReader1 = new Thread(() -> {
             long startTime = System.currentTimeMillis();
             try {
-                var xx = exe1.readFromPiped();
-                res1.set(xx);
+                res1.set(exe1.readFromPiped());
                 System.out.println("Out1: " + res1);
             } catch (IOException ignored) {
             }
             long endTime = System.currentTimeMillis();
             System.out.println("f execution time: " + (endTime - startTime) + "ms");
         });
+
         Thread pipeReader2 = new Thread(() -> {
             long startTime = System.currentTimeMillis();
             try {
@@ -47,13 +48,12 @@ public class Manager {
         });
         stopper.setDaemon(true);
 
-        Foo interruptAll = (x1) -> {
+        Runnable interruptAll = () -> {
             stopped.set(true);
             exe1.interrupt();
             exe2.interrupt();
             pipeReader1.interrupt();
             pipeReader2.interrupt();
-            return String.valueOf(x1);
         };
         stopper.start();
         pipeReader1.start();
@@ -63,17 +63,17 @@ public class Manager {
 
         do {
             if (stopped.get()) {
-                interruptAll.method(0);
+                interruptAll.run();
                 throw new InterruptedException("tasks was stopped");
             }
-            if (exe1.failedMessage.length() != 0) {
-                var error = exe1.failedMessage;
-                interruptAll.method(0);
+            if (exe1.failed()) {
+                String error = exe1.getFailedMessage();
+                interruptAll.run();
                 throw new InterruptedException("f failed: " + error);
             }
-            if (exe2.failedMessage.length() != 0) {
-                var error = exe2.failedMessage;
-                interruptAll.method(0);
+            if (exe1.failed()) {
+                String error = exe2.getFailedMessage();
+                interruptAll.run();
                 throw new InterruptedException("g failed: " + error);
             }
         } while (res1.get() == null || res2.get() == null);
@@ -82,7 +82,6 @@ public class Manager {
         exe2.join();
         pipeReader1.join();
         pipeReader2.join();
-        stopper.join(1);
         return operation(res1.get(), res2.get());
     }
 

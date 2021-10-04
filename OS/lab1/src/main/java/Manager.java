@@ -1,8 +1,6 @@
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 public class Manager {
@@ -10,79 +8,58 @@ public class Manager {
     public String run(int x) throws InterruptedException, IOException {
         Function<Integer, String> f = "Hello"::repeat;
         Function<Integer, String> g = x1 -> " World!" + "abcdefg".charAt(x1);
-        AtomicReference<String> res1 = new AtomicReference<>();
-        AtomicReference<String> res2 = new AtomicReference<>();
-        Executor exe1 = new Executor(3800, f, x);
-        Executor exe2 = new Executor(900, g, x);
 
-        Thread pipeReader1 = new Thread(() -> {
-            long startTime = System.currentTimeMillis();
-            try {
-                res1.set(exe1.readFromPiped());
-                System.out.println("Out1: " + res1);
-            } catch (IOException ignored) {
-            }
-            long endTime = System.currentTimeMillis();
-            System.out.println("f execution time: " + (endTime - startTime) + "ms");
-        });
+        PipeWrapper pipe1 = new PipeWrapper("f", 4600, f, x);
+        PipeWrapper pipe2 = new PipeWrapper("g", 1500, g, x);
 
-        Thread pipeReader2 = new Thread(() -> {
-            long startTime = System.currentTimeMillis();
-            try {
-                res2.set(exe2.readFromPiped());
-                System.out.println("Out2: " + res2);
-            } catch (IOException ignored) {
-            }
-            long endTime = System.currentTimeMillis();
-            System.out.println("g execution time: " + (endTime - startTime) + "ms");
-        });
-
-        AtomicBoolean stopped = new AtomicBoolean(false);
-        Thread stopper = new Thread(() -> {
-            while (!stopped.get()) {
-                String line = new Scanner(System.in).nextLine();
-                if (line.toLowerCase(Locale.ROOT).equals("stop")) {
-                    stopped.set(true);
-                }
-            }
-        });
-        stopper.setDaemon(true);
+        boolean stopped = false;
 
         Runnable interruptAll = () -> {
-            stopped.set(true);
-            exe1.interrupt();
-            exe2.interrupt();
-            pipeReader1.interrupt();
-            pipeReader2.interrupt();
+            pipe1.interrupt();
+            pipe2.interrupt();
         };
-        stopper.start();
-        pipeReader1.start();
-        pipeReader2.start();
-        exe1.start();
-        exe2.start();
-
+        pipe1.start();
+        pipe2.start();
+        String res1 = null, res2 = null;
         do {
-            if (stopped.get()) {
+            String tmp;
+            tmp = pipe1.readFromPiped();
+
+            if (tmp != null){
+                res1 = tmp;
+            }
+            tmp = pipe2.readFromPiped();
+            if (tmp != null){
+                res2 = tmp;
+            }
+
+            if (stopped) {
                 interruptAll.run();
                 throw new InterruptedException("tasks was stopped");
             }
-            if (exe1.failed()) {
-                String error = exe1.getFailedMessage();
+            if (pipe1.failed()) {
+                String error = pipe1.getFailedMessage();
                 interruptAll.run();
-                throw new InterruptedException("f failed: " + error);
+                throw new InterruptedException(pipe1.name + " failed: " + error);
             }
-            if (exe1.failed()) {
-                String error = exe2.getFailedMessage();
+            if (pipe1.failed()) {
+                String error = pipe2.getFailedMessage();
                 interruptAll.run();
-                throw new InterruptedException("g failed: " + error);
+                throw new InterruptedException(pipe1.name + " failed: " + error);
             }
-        } while (res1.get() == null || res2.get() == null);
+            if(System.in.available() != 0){
+                String line = new Scanner(System.in).nextLine();
+                if (line.toLowerCase(Locale.ROOT).equals("stop")) {
+                    stopped = true;
+                } else {
+                    System.out.println("Unknown command: " + line);
+                }
+            }
+        } while (res1 == null || res2 == null);
 
-        exe1.join();
-        exe2.join();
-        pipeReader1.join();
-        pipeReader2.join();
-        return operation(res1.get(), res2.get());
+        pipe1.join();
+        pipe2.join();
+        return operation(res1, res2);
     }
 
     public static String operation(String a, String b){

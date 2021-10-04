@@ -3,7 +3,6 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Scanner;
 import java.util.function.Function;
 
 public class PipeWrapper extends Thread {
@@ -11,22 +10,25 @@ public class PipeWrapper extends Thread {
     private final PipedInputStream pipedInputStream;
     private final int sleepTime;
     private final Function<Integer, String> func;
-    private final int value;
+    private Integer value;
     private String failedMessage;
     private long startTime;
     public String name;
 
-    public PipeWrapper(String name, int sleepTime, Function<Integer, String> func, int value) throws IOException {
+    public PipeWrapper(String name, int sleepTime, Function<Integer, String> func) throws IOException {
         this.pipedInputStream = new PipedInputStream();
         this.pipedOutputStream = new PipedOutputStream(pipedInputStream);
         this.sleepTime = sleepTime;
         this.func = func;
-        this.value = value;
+        this.value = null;
         this.name = name;
     }
 
     @Override
     public synchronized void start() {
+        if (value == null) {
+            failedMessage = "Not pass value";
+        }
         startTime = System.currentTimeMillis();
         super.start();
     }
@@ -68,7 +70,7 @@ public class PipeWrapper extends Thread {
                     size -= readed;
                 }
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             failedMessage = "Pipe read error";
             res = null;
         }
@@ -84,5 +86,9 @@ public class PipeWrapper extends Thread {
 
     public String getFailedMessage() {
         return failedMessage;
+    }
+
+    public void setValue(int x) {
+        value = x;
     }
 }

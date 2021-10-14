@@ -51,6 +51,8 @@ public class PipeWrapper extends Thread {
             failedMessage = "Incorrect argument";
         } catch (StringIndexOutOfBoundsException e) {
             failedMessage = "Out of range";
+        } catch (Exception e) {
+            failedMessage = "Unknown error";
         }
     }
 

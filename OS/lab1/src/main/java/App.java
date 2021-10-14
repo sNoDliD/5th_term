@@ -1,6 +1,8 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import os.lab1.compfuncs.basic.Concatenation;
+
 public class App {
     public static void main(String[] args) {
         Manager manager = new Manager();
@@ -17,9 +19,20 @@ public class App {
             long startTime = System.currentTimeMillis();
             try {
                 PipeWrapper[] pipes = {
-                        new PipeWrapper("f", 4600, "Hello"::repeat),
-                        new PipeWrapper("g", 1500, x1 -> " World!" + "abcdefg".charAt(x1)),
-                        new PipeWrapper("h", 3750, String::valueOf),
+                        new PipeWrapper("f", 0, (integer -> {
+                            try {
+                                return Concatenation.trialF(integer).orElse("");
+                            }  catch (final Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        })),
+                        new PipeWrapper("g", 0, (integer -> {
+                            try {
+                                return Concatenation.trialG(integer).orElse("");
+                            }  catch (final Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        })),
                 };
                 String res = manager.run(x, pipes);
                 System.out.println(res);

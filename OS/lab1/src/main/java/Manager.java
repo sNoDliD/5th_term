@@ -51,7 +51,7 @@ public class Manager {
     private String operation(String[] res) {
         StringBuilder result = new StringBuilder();
         for (String re : res) {
-            result.append(re).append(" ");
+            result.append(re);
         }
         return result.toString();
     }

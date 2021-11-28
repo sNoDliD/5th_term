@@ -71,7 +71,6 @@ public class BallCreator {
     protected void move(Camera cam) {
         Random rand = new Random();
         for (RigidBodyControl rigidBody : movableRigidBodyes) {
-            System.out.println(rigidBody.getPhysicsLocation());
             rigidBody.setLinearVelocity(Physics.calcDirection(cam, rigidBody).mult(6 + rand.nextInt(20)));
         }
     }

@@ -55,7 +55,7 @@ def range(x, n)
   sum
 end
 
-puts 'Input n (from 10 to 58 or 0 to count infinitely): '
+puts 'Input n (from 18 to 58 or 0 to count infinitely): '
 n = gets.chomp.to_i
 if n != 0
   while (n < 18) || (n > 58)

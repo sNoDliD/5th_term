@@ -1,0 +1,8 @@
+READ 900 ... okay
+READ 5600 ... page fault
+WRITE 2200 ... okay
+READ 6700 ... page fault
+READ 1200 ... page fault
+WRITE 100 ... page fault
+WRITE 1300 ... okay
+READ 7800 ... page fault

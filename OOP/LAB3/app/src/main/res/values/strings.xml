@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Checkers</string>
+
+    <string-array name="color_picker">
+        <item>WHITE</item>
+        <item>BLACK</item>
+    </string-array>
+</resources>

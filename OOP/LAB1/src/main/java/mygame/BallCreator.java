@@ -22,6 +22,7 @@ public class BallCreator {
     private Material material;
     private final ArrayList<RigidBodyControl> movableRigidBodyes = new ArrayList<>();
     private static final Sphere SPHERE;
+    private static final Physics physics = new Physics();
 
     static {
         SPHERE = new Sphere(32, 32, 0.6f, true, false);
@@ -64,14 +65,14 @@ public class BallCreator {
     }
 
     protected void createBall(Camera cam) {
-        RigidBodyControl ballRigidBody = initBall(Physics.calcPosition(cam));
+        RigidBodyControl ballRigidBody = initBall(physics.calcPosition(cam));
         movableRigidBodyes.add(ballRigidBody);
     }
 
     protected void move(Camera cam) {
         Random rand = new Random();
         for (RigidBodyControl rigidBody : movableRigidBodyes) {
-            rigidBody.setLinearVelocity(Physics.calcDirection(cam, rigidBody).mult(6 + rand.nextInt(20)));
+            rigidBody.setLinearVelocity(physics.calcDirection(cam, rigidBody).mult(6 + rand.nextInt(20)));
         }
     }
 }

@@ -33,7 +33,8 @@ public class PhysicsTest {
         when(camera.getLocation()).thenReturn(cameraLocation);
         when(camera.getDirection()).thenReturn(cameraDirection);
 
-        Vector3f actual = Physics.calcPosition(camera);
+        Physics physics = new Physics();
+        Vector3f actual = physics.calcPosition(camera);
 
         assertEquals(expected, actual);
     }
@@ -50,7 +51,8 @@ public class PhysicsTest {
                 0.5f,
                 (cameraDirection.z * (0.5f - cameraLocation.y) / cameraDirection.y) + cameraLocation.z - ball_phys.getPhysicsLocation().z).normalizeLocal();
 
-        Vector3f actual = Physics.calcDirection(camera, ball_phys);
+        Physics physics = new Physics();
+        Vector3f actual = physics.calcDirection(camera, ball_phys);
 
         assertEquals(expected, actual);
     }

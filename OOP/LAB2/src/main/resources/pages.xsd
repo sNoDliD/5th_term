@@ -1,0 +1,45 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="InternetPages">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="site" type="Site" maxOccurs="unbounded" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="Site">
+        <xsd:sequence>
+            <xsd:element name="title" type="xsd:string"/>
+            <xsd:element name="sitetype" type="SiteType"/>
+            <xsd:element name="authorize" type="xsd:boolean"/>
+            <xsd:element name="chars" type="Chars"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="SiteType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ADVERTISING"/>
+            <xsd:enumeration value="NEWS"/>
+            <xsd:enumeration value="PORTAL"/>
+            <xsd:enumeration value="MIRROR"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="Chars">
+        <xsd:sequence>
+            <xsd:element name="email" type="xsd:string"/>
+            <xsd:element name="poll" type="xsd:boolean"/>
+            <xsd:element name="polltype" type="PollType"/>
+            <xsd:element name="free" type="xsd:boolean"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="PollType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ANONYMOUS"/>
+            <xsd:enumeration value="AUTHORIZED"/>
+            <xsd:enumeration value="null"/>
+            <xsd:enumeration value=""/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

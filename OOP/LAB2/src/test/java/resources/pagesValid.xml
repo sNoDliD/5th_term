@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<InternetPages>
+    <site>
+        <title>MyFirstSite</title>
+        <sitetype>PORTAL</sitetype>
+        <authorize>true</authorize>
+        <chars>
+            <email>my.email@gmail.com</email>
+            <poll>true</poll>
+            <polltype>AUTHORIZED</polltype>
+            <free>true</free>
+        </chars>
+    </site>
+    <site>
+        <title>MySecondSite</title>
+        <sitetype>NEWS</sitetype>
+        <authorize>false</authorize>
+        <chars>
+            <email>top.email@gmail.com</email>
+            <poll>true</poll>
+            <polltype>ANONYMOUS</polltype>
+            <free>false</free>
+        </chars>
+    </site>
+    <site>
+        <title>MyThirdSite</title>
+        <sitetype>MIRROR</sitetype>
+        <authorize>true</authorize>
+        <chars>
+            <email>no.email@gmail.com</email>
+            <poll>false</poll>
+            <polltype/>
+            <free>false</free>
+        </chars>
+    </site>
+</InternetPages>

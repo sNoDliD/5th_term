@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<InternetPages>
+    <site>
+        <title>Site</title>
+        <sitetype>ADVERTISING</sitetype>
+        <authorize>false</authorize>
+        <chars>
+            <email>email@gmail.com</email>
+            <poll>true</poll>
+            <polltype>ANONYMOUS</polltype>
+            <free>false</free>
+        </chars>
+    </site>
+</InternetPages>
